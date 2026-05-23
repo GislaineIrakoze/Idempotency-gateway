@@ -1,0 +1,15 @@
+out/
+target/
+node_modules/
+dist/
+.vite/
+*.class
+*.tsbuildinfo
+*.log
+*.out
+*.err
+*.zip
+.env
+.DS_Store
+.idea/
+.vscode/
