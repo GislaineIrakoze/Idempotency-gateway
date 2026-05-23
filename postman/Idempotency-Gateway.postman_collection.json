@@ -1,0 +1,127 @@
+{
+  "info": {
+    "name": "Idempotency Gateway",
+    "description": "Postman collection for testing the Pay-Once Idempotency Gateway API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "gatewayBaseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "idempotencyKey",
+      "value": "postman-demo-100"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{gatewayBaseUrl}}/health",
+          "host": ["{{gatewayBaseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "First Payment - Processes Once",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"amount\": 100, \"currency\": \"RWF\"}"
+        },
+        "url": {
+          "raw": "{{gatewayBaseUrl}}/process-payment",
+          "host": ["{{gatewayBaseUrl}}"],
+          "path": ["process-payment"]
+        }
+      }
+    },
+    {
+      "name": "Duplicate Payment - Cached Replay",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"amount\": 100, \"currency\": \"RWF\"}"
+        },
+        "url": {
+          "raw": "{{gatewayBaseUrl}}/process-payment",
+          "host": ["{{gatewayBaseUrl}}"],
+          "path": ["process-payment"]
+        }
+      }
+    },
+    {
+      "name": "Same Key Different Body - Conflict",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotencyKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"amount\": 500, \"currency\": \"RWF\"}"
+        },
+        "url": {
+          "raw": "{{gatewayBaseUrl}}/process-payment",
+          "host": ["{{gatewayBaseUrl}}"],
+          "path": ["process-payment"]
+        }
+      }
+    },
+    {
+      "name": "Missing Idempotency Key - Bad Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"amount\": 100, \"currency\": \"RWF\"}"
+        },
+        "url": {
+          "raw": "{{gatewayBaseUrl}}/process-payment",
+          "host": ["{{gatewayBaseUrl}}"],
+          "path": ["process-payment"]
+        }
+      }
+    }
+  ]
+}
